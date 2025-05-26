@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,21 +14,21 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-set -euxo pipefail
+from __future__ import annotations
 
-cd "$( dirname "${BASH_SOURCE[0]}" )/../../"
+import re
 
-PYTHON_ARG=""
+from airflow.api_fastapi.core_api.datamodels.providers import ProviderResponse
+from airflow.providers_manager import ProviderInfo
 
-PIP_VERSION="25.1.1"
-UV_VERSION="0.7.8"
-if [[ ${PYTHON_VERSION=} != "" ]]; then
-    PYTHON_ARG="--python=$(which python"${PYTHON_VERSION}") "
-fi
 
-python -m pip install --upgrade "pip==${PIP_VERSION}"
-python -m pip install "uv==${UV_VERSION}"
-uv tool uninstall apache-airflow-breeze >/dev/null 2>&1 || true
-# shellcheck disable=SC2086
-uv tool install ${PYTHON_ARG} --force --editable ./dev/breeze/
-echo '/home/runner/.local/bin' >> "${GITHUB_PATH}"
+def _remove_rst_syntax(value: str) -> str:
+    return re.sub("[`_<>]", "", value.strip(" \n."))
+
+
+def _provider_mapper(provider: ProviderInfo) -> ProviderResponse:
+    return ProviderResponse(
+        package_name=provider.data["package-name"],
+        description=_remove_rst_syntax(provider.data["description"]),
+        version=provider.version,
+    )
