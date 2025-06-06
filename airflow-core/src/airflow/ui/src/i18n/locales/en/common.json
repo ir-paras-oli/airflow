@@ -19,6 +19,7 @@
   "dagRun_other": "Dag Runs",
   "defaultToGraphView": "Default to graph view",
   "defaultToGridView": "Default to grid view",
+  "direction": "Direction",
   "docs": {
     "documentation": "Documentation",
     "githubRepo": "GitHub Repo",
@@ -101,11 +102,8 @@
   "table": {
     "filterByTag": "Filter Dags by tag",
     "filterColumns": "Filter table columns",
-    "filters": {
-      "filter_one": "filter",
-      "filter_other": "filters",
-      "reset": "Reset"
-    },
+    "filterReset_one": "Reset filter",
+    "filterReset_other": "Reset filters",
     "noTagsFound": "No tags found",
     "tagMode": {
       "all": "All",
