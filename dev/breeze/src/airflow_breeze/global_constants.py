@@ -46,6 +46,11 @@ APACHE_AIRFLOW_GITHUB_REPOSITORY = "apache/airflow"
 # Checked before putting in build cache
 ALLOWED_PYTHON_MAJOR_MINOR_VERSIONS = ["3.10", "3.11", "3.12"]
 DEFAULT_PYTHON_MAJOR_MINOR_VERSION = ALLOWED_PYTHON_MAJOR_MINOR_VERSIONS[0]
+
+# Maps each supported Python version to the minimum Airflow version that supports it.
+# Used to filter Airflow versions incompatible with a given Python runtime.
+PYTHON_TO_MIN_AIRFLOW_MAPPING = {"3.10": "2.4.0"}
+
 ALLOWED_ARCHITECTURES = [Architecture.X86_64, Architecture.ARM]
 # Database Backends used when starting Breeze. The "none" value means that the configuration is invalid.
 # No database will be started - access to a database will fail.
@@ -727,7 +732,26 @@ DEFAULT_EXTRAS = [
     # END OF EXTRAS LIST UPDATED BY PRE COMMIT
 ]
 
-PROVIDERS_COMPATIBILITY_TESTS_MATRIX: list[dict[str, str | list[str]]] = []
+PROVIDERS_COMPATIBILITY_TESTS_MATRIX: list[dict[str, str | list[str]]] = [
+    {
+        "python-version": "3.10",
+        "airflow-version": "2.10.5",
+        "remove-providers": "common.messaging fab git keycloak",
+        "run-tests": "true",
+    },
+    {
+        "python-version": "3.10",
+        "airflow-version": "2.11.0",
+        "remove-providers": "common.messaging fab git keycloak",
+        "run-tests": "true",
+    },
+    {
+        "python-version": "3.10",
+        "airflow-version": "3.0.2",
+        "remove-providers": "",
+        "run-tests": "true",
+    },
+]
 
 # Number of slices for low dep tests
 NUMBER_OF_LOW_DEP_SLICES = 5
