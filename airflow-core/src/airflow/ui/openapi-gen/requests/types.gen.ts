@@ -1731,24 +1731,6 @@ export type ExtraMenuItem = {
 };
 
 /**
- * DAG Run model for the Grid UI.
- */
-export type GridDAGRunwithTIs = {
-    dag_run_id: string;
-    queued_at: string | null;
-    start_date: string | null;
-    end_date: string | null;
-    run_after: string;
-    state: DagRunState;
-    run_type: DagRunType;
-    logical_date: string | null;
-    data_interval_start: string | null;
-    data_interval_end: string | null;
-    note: string | null;
-    task_instances: Array<GridTaskInstanceSummary>;
-};
-
-/**
  * Base Node serializer for responses.
  */
 export type GridNodeResponse = {
@@ -1757,13 +1739,6 @@ export type GridNodeResponse = {
     children?: Array<GridNodeResponse> | null;
     is_mapped: boolean | null;
     setup_teardown_type?: 'setup' | 'teardown' | null;
-};
-
-/**
- * Response model for the Grid UI.
- */
-export type GridResponse = {
-    dag_runs: Array<GridDAGRunwithTIs>;
 };
 
 /**
@@ -1778,7 +1753,7 @@ export type GridRunsResponse = {
     run_after: string;
     state: TaskInstanceState | null;
     run_type: DagRunType;
-    readonly duration: number | null;
+    readonly duration: number;
 };
 
 /**
@@ -1788,23 +1763,6 @@ export type GridTISummaries = {
     run_id: string;
     dag_id: string;
     task_instances: Array<LightGridTaskInstanceSummary>;
-};
-
-/**
- * Task Instance Summary model for the Grid UI.
- */
-export type GridTaskInstanceSummary = {
-    task_id: string;
-    try_number: number;
-    start_date: string | null;
-    end_date: string | null;
-    queued_dttm: string | null;
-    child_states: {
-    [key: string]: (number);
-} | null;
-    task_count: number;
-    state: TaskInstanceState | null;
-    note: string | null;
 };
 
 /**
@@ -2215,6 +2173,21 @@ export type TriggerDagRunData = {
 };
 
 export type TriggerDagRunResponse = DAGRunResponse;
+
+export type WaitDagRunUntilFinishedData = {
+    dagId: string;
+    dagRunId: string;
+    /**
+     * Seconds to wait between dag run state checks
+     */
+    interval: number;
+    /**
+     * Collect result XCom from task. Can be set multiple times.
+     */
+    result?: Array<(string)> | null;
+};
+
+export type WaitDagRunUntilFinishedResponse = unknown;
 
 export type GetListDagRunsBatchData = {
     dagId: "~";
@@ -2917,24 +2890,6 @@ export type StructureDataData = {
 };
 
 export type StructureDataResponse2 = StructureDataResponse;
-
-export type GridDataData = {
-    dagId: string;
-    includeDownstream?: boolean;
-    includeUpstream?: boolean;
-    limit?: number;
-    logicalDateGte?: string | null;
-    logicalDateLte?: string | null;
-    offset?: number;
-    orderBy?: string;
-    root?: string | null;
-    runAfterGte?: string | null;
-    runAfterLte?: string | null;
-    runType?: Array<(string)>;
-    state?: Array<(string)>;
-};
-
-export type GridDataResponse = GridResponse;
 
 export type GetDagStructureData = {
     dagId: string;
@@ -3972,6 +3927,33 @@ export type $OpenApiTs = {
                  * Conflict
                  */
                 409: HTTPExceptionResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/dags/{dag_id}/dagRuns/{dag_run_id}/wait': {
+        get: {
+            req: WaitDagRunUntilFinishedData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Unauthorized
+                 */
+                401: HTTPExceptionResponse;
+                /**
+                 * Forbidden
+                 */
+                403: HTTPExceptionResponse;
+                /**
+                 * Not Found
+                 */
+                404: HTTPExceptionResponse;
                 /**
                  * Validation Error
                  */
@@ -5935,29 +5917,6 @@ export type $OpenApiTs = {
                  * Successful Response
                  */
                 200: StructureDataResponse;
-                /**
-                 * Not Found
-                 */
-                404: HTTPExceptionResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/ui/grid/{dag_id}': {
-        get: {
-            req: GridDataData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: GridResponse;
-                /**
-                 * Bad Request
-                 */
-                400: HTTPExceptionResponse;
                 /**
                  * Not Found
                  */
